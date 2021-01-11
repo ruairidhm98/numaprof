@@ -18,6 +18,7 @@ namespace numaprof
 /**
  * Constructor og the tracker.
  * @param pageTable Pointer to the page table to register allocation regerences.
+ * @param nNodes number of nodes in the topology. Used to instantiate allocMatrix
 **/
 MallocTracker::MallocTracker(PageTable * pT, int nNodes)
   : pageTable(pT)

@@ -58,14 +58,14 @@ class MallocTracker
 		void flush(class ProcessTracker * process);
     void setNode(int node);
 	private:
-    /** if this is tracked by a pin thread, then store the region it belongs to. This will be -1 if not */
-		int numaRegion;
     /** Pointer to the page table to know where to register the allocations **/
 		PageTable * pageTable;
 		/** Instruction map to store the per malloc call site counters **/
 		InstrInfoMap instructions;
     /** Store the allocation counts per region */
     AllocationMatrix allocMatrix;
+    /** if this is tracked by a pin thread, then store the region it belongs to. This will be -1 if not */
+		int numaRegion;
 };
 
 }

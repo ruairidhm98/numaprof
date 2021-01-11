@@ -18,5 +18,5 @@ using namespace numaprof;
 TEST(MallocTracker,constructor)
 {
 	PageTable table;
-	MallocTracker tracker(&table);
+	MallocTracker tracker(&table, 1);
 }
