@@ -35,7 +35,7 @@ MallocTracker::MallocTracker(PageTable * pT, int nNodes)
  * @param node the reegion the malloc tracker resides on
  *
 **/  
-void MallocTracker::setNode(int node)
+inline void MallocTracker::setNode(int node)
 {
   numaRegion = node;
 }
