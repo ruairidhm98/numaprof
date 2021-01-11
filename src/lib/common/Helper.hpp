@@ -12,6 +12,7 @@
 /*******************  HEADERS  **********************/
 #include <cstdlib>
 #include <string>
+#include "../core/AccessMatrix.hpp"
 
 /*******************  NAMESPACE  ********************/
 namespace numaprof
@@ -38,6 +39,9 @@ struct Helper
 	static bool extractNth(char * out,const char * value,char sep,int index);
 	static bool endBy(const std::string & value,const std::string & what);
 	static bool contain(const char * in, const char * what);
+  static void updateMatrix(AccessMatrix& matrix, int numa, int pageNode);
+private:
+  static int getNumaRegion();
 };
 
 }

@@ -22,7 +22,22 @@ namespace numaprof
 MallocTracker::MallocTracker(PageTable * pT, int nNodes)
   : pageTable(pT)
   , allocMatrix(nNodes)
+  , numaRegion(-1)
 {}
+
+/*******************  FUNCTION  *********************/
+/**
+ * To be called in the constructor of ThreadTracker. The passed in parameter
+ * will be the numa region the MallocTracker is on, provided that the thread
+ * is pinned. This avoids unnecessary syscalls to discover the location of the
+ * thread making the allocation. 
+ * @param 
+ *
+**/  
+void MallocTracker::setNode(int node)
+{
+  numaRegion = node;
+}
 
 /*******************  FUNCTION  *********************/
 /**
@@ -56,10 +71,7 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
 
   Page& page = pageTable->getPage(ptr);
   int pageNode = page.numaNode;
-  if (pageNode >= 0)
-  {
-    
-  }
+  Helper::updateMatrix(allocMatrix, numaRegion, pageNode);
 }
 
 /*******************  FUNCTION  *********************/

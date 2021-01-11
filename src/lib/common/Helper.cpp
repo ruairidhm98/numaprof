@@ -9,6 +9,7 @@
 /*******************  HEADERS  **********************/
 #include <cstdio>
 #include <cstring>
+#include <sys/syscall.h>
 #include <unistd.h>
 #include "Debug.hpp"
 #include "Helper.hpp"
@@ -116,5 +117,41 @@ bool Helper::contain(const char * in, const char * what)
 {
 	return strstr(in,what) != NULL;
 }
+
+/*******************  FUNCTION  ********************/
+/**
+ * Updates the access matrix. A common pattern accross
+ * the updates is to check if the node is pinned, if it
+ * is not, then we need to syscall the location
+ * @param matrix to be updated
+ * @param numa region of the calling code
+**/ 
+void Helper::updateMatrix(AccessMatrix& matrix, int numa, int pageNode)
+{
+  // If the pageNode is valid
+  if (pageNode >= 0)
+  {
+    // If the thread is not pinned to a region
+    if (numa < 0)
+    {
+      numa = getNumaRegion();
+    }
+    matrix.access(numa, pageNode);
+  }
+}
+
+/*******************  FUNCTION  ********************/
+/**
+ * Discover the numa region of the calling code. Uses syscall to
+ * achieve this. So think is there is some useful data that would
+ * avoid having to call this!
+**/
+inline int Helper::getNumaRegion()
+{
+  int numaRegion;
+  syscall(SYS_getcpu, NULL, &numaRegion, NULL);
+  return numaRegion;
+}
+
 
 }

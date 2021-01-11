@@ -8,11 +8,10 @@
 
 /********************  HEADERS  *********************/
 #include <sys/mman.h>
-#include <sys/syscall.h>
 #include <cassert>
-#include <unistd.h>
 #include "ThreadTracker.hpp"
 #include "../common/Debug.hpp"
+#include "../common/Helper.hpp"
 #include "../portability/OS.hpp"
 #include "../common/Options.hpp"
 #include "../caches/CpuCacheBuilder.hpp"
@@ -343,18 +342,12 @@ void ThreadTracker::onAccessHandling(size_t ip,size_t addr,bool write,bool skip)
 		}
 	#endif
 	
-	//acces matrix
+	// Access matrix
+  Helper::updateMatrix(accessMatrix, numa, pageNode);
+
+  // Distance statistics
 	if (pageNode >= 0)
 	{
-		if (pinned)
-		{
-		  accessMatrix.access(numa,pageNode);
-		}
-		else
-		{
-      syscall(SYS_getcpu, NULL, &numa, NULL);
-      accessMatrix.access(numa, pageNode);
-		}
 		distanceCnt[topo->getDistance(numa,pageNode)+1]++;
 	}
 

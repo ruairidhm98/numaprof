@@ -7,6 +7,7 @@
 *****************************************************/
 
 /*******************  HEADERS  **********************/
+#include "../common/Helper.hpp"
 #include "AccessMatrix.hpp"
 #include "PageTable.hpp"
 #include "Stats.hpp"
@@ -55,8 +56,11 @@ class MallocTracker
 		void onAlloc(StackIp & ip,size_t ptr, size_t size);
 		void onFree(size_t ptr);
 		void flush(class ProcessTracker * process);
+    void setNode(int node);
 	private:
-		/** Pointer to the page table to know where to register the allocations **/
+    /** if this is tracked by a pin thread, then store the region it belongs to. This will be -1 if not */
+		int numaRegion;
+    /** Pointer to the page table to know where to register the allocations **/
 		PageTable * pageTable;
 		/** Instruction map to store the per malloc call site counters **/
 		InstrInfoMap instructions;
