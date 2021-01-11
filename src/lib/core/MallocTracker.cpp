@@ -32,7 +32,7 @@ MallocTracker::MallocTracker(PageTable * pT, int nNodes)
  * will be the numa region the MallocTracker is on, provided that the thread
  * is pinned. This avoids unnecessary syscalls to discover the location of the
  * thread making the allocation. 
- * @param 
+ * @param node the reegion the malloc tracker resides on
  *
 **/  
 void MallocTracker::setNode(int node)

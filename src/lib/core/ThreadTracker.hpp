@@ -152,8 +152,6 @@ class ThreadTracker
 		Stack stack;
 		/** Access matrix of the current thread **/
 		AccessMatrix accessMatrix;
-		/** True iff the thread is pinned, false otherwise **/
-		bool pinned;
 		/** CPU on which the thread is allowed to run on **/
 		CpuBindList cpuBindList;
 		/** Mutex to protect access to the binding logs **/

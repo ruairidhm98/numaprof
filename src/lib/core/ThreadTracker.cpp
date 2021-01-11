@@ -36,7 +36,10 @@ ThreadTracker::ThreadTracker(ProcessTracker * process)
 	assert(process != NULL);
 	this->process = process;
 	this->numa = process->getNumaAffinity(&cpuBindList);
-	this->pinned = this->numa >= 0;
+  if (this->numa >= 0)
+  {
+    allocTracker.setNode(numa);
+  }
 	this->table = process->getPageTable();
 	this->topo = &process->getNumaTopo();
 	this->clockStart = Clock::get();
