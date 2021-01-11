@@ -19,10 +19,10 @@ namespace numaprof
  * Constructor og the tracker.
  * @param pageTable Pointer to the page table to register allocation regerences.
 **/
-MallocTracker::MallocTracker(PageTable * pageTable)
-{
-	this->pageTable = pageTable;
-}
+MallocTracker::MallocTracker(PageTable * pT, int nNodes)
+  : pageTable(pT)
+  , allocMatrix(nNodes)
+{}
 
 /*******************  FUNCTION  *********************/
 /**
@@ -53,6 +53,13 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
 	
 	//reg to page table
 	pageTable->regAllocPointer(ptr,size,infos);
+
+  Page& page = pageTable->getPage(ptr);
+  int pageNode = page.numaNode;
+  if (pageNode >= 0)
+  {
+    
+  }
 }
 
 /*******************  FUNCTION  *********************/

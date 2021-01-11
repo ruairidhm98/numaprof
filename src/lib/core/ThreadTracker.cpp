@@ -8,7 +8,9 @@
 
 /********************  HEADERS  *********************/
 #include <sys/mman.h>
+#include <sys/syscall.h>
 #include <cassert>
+#include <unistd.h>
 #include "ThreadTracker.hpp"
 #include "../common/Debug.hpp"
 #include "../portability/OS.hpp"
@@ -28,12 +30,14 @@ namespace numaprof
  * the NUMA topology of the machine.
 **/
 ThreadTracker::ThreadTracker(ProcessTracker * process)
-              :allocTracker(process->getPageTable())
-              ,accessMatrix(process->getNumaTopo().getNumaNodes())
+              :nRegions(process->getNumaTopo().getNumaNodes())
+              ,allocTracker(process->getPageTable(), nRegions)
+              ,accessMatrix(nRegions)
 {
 	assert(process != NULL);
 	this->process = process;
 	this->numa = process->getNumaAffinity(&cpuBindList);
+	this->pinned = this->numa >= 0;
 	this->table = process->getPageTable();
 	this->topo = &process->getNumaTopo();
 	this->clockStart = Clock::get();
@@ -342,7 +346,15 @@ void ThreadTracker::onAccessHandling(size_t ip,size_t addr,bool write,bool skip)
 	//acces matrix
 	if (pageNode >= 0)
 	{
-		accessMatrix.access(numa,pageNode);
+		if (pinned)
+		{
+		  accessMatrix.access(numa,pageNode);
+		}
+		else
+		{
+      syscall(SYS_getcpu, NULL, &numa, NULL);
+      accessMatrix.access(numa, pageNode);
+		}
 		distanceCnt[topo->getDistance(numa,pageNode)+1]++;
 	}
 

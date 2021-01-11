@@ -120,6 +120,8 @@ class ThreadTracker
 		bool isMemBind(void);
 		void flushAccessBatch(void);
 	private:
+    /** Store the number of regions **/
+    int nRegions;
 		/** Linux thread ID **/
 		int tid;
 		/** Pointer to the parrent process tracker **/
@@ -150,6 +152,8 @@ class ThreadTracker
 		Stack stack;
 		/** Access matrix of the current thread **/
 		AccessMatrix accessMatrix;
+		/** True iff the thread is pinned, false otherwise **/
+		bool pinned;
 		/** CPU on which the thread is allowed to run on **/
 		CpuBindList cpuBindList;
 		/** Mutex to protect access to the binding logs **/
