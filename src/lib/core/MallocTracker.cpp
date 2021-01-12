@@ -18,10 +18,33 @@ namespace numaprof
 /**
  * Constructor og the tracker.
  * @param pageTable Pointer to the page table to register allocation regerences.
+ * @param region the region the thread that owns this resides on, determines if pinned or not
+ * @param nRegions number of reegions in the topology
 **/
-MallocTracker::MallocTracker(PageTable * pageTable)
+MallocTracker::MallocTracker(PageTable * pageTable, int nRegions)
+  : allocMatrix(nRegions)
+  , numaRegion(-1)
 {
 	this->pageTable = pageTable;
+}
+
+/*******************  FUNCTION  *********************/
+/**
+ * Called in the constructor of ThreadTracker, to determine if pinned or not
+ * @param region the malloc tracker resides on (associated with threadTracker) 
+**/ 
+void MallocTracker::setNumaRegion(int region)
+{
+  numaRegion = region;
+}
+
+/*******************  FUNCTION  *********************/
+/**
+ * Return a const reference to the allocation matrix so it can be converted to JSON
+**/ 
+AccessMatrix const& MallocTracker::getAllocMatrix() const
+{
+  return allocMatrix;
 }
 
 /*******************  FUNCTION  *********************/
@@ -53,6 +76,12 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
 	
 	//reg to page table
 	pageTable->regAllocPointer(ptr,size,infos);
+  // Record the allocation into the matrix
+  Page& page = pageTable->getPage(ptr);
+  if (page.numaNode >= 0)
+  {
+    allocMatrix.access(numaRegion, page.numaNode);
+  }
 }
 
 /*******************  FUNCTION  *********************/

@@ -28,12 +28,16 @@ namespace numaprof
  * the NUMA topology of the machine.
 **/
 ThreadTracker::ThreadTracker(ProcessTracker * process)
-              :allocTracker(process->getPageTable())
+              :allocTracker(process->getPageTable(), process->getNumaTopo().getNumaNodes())
               ,accessMatrix(process->getNumaTopo().getNumaNodes())
 {
 	assert(process != NULL);
 	this->process = process;
 	this->numa = process->getNumaAffinity(&cpuBindList);
+  if (this->numa >= 0)
+  {
+    allocTracker.setNumaRegion(this->numa);
+  }
 	this->table = process->getPageTable();
 	this->topo = &process->getNumaTopo();
 	this->clockStart = Clock::get();
@@ -607,6 +611,7 @@ void convertToJson(htopml::JsonState& json, const ThreadTracker& value)
 		json.printField("numa",value.numa);
 		json.printField("memPolicy",value.memPolicy);
 		json.printField("binding",value.cpuBindList);
+    json.printField("allocationMatrix", value.allocTracker.getAllocMatrix());
 		json.printField("accessMatrix",value.accessMatrix);
 		json.printFieldArray("distanceCnt",value.distanceCnt,value.topo->getDistanceMax()+2);
 		json.printField("bindingLog",value.bindingLog);
