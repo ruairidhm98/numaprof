@@ -334,6 +334,17 @@ function loadAccessMatrix()
 }
 
 /*******************  FUNCTION  *********************/
+function loadAllocationMatrix()
+{
+	$.getJSON( "/api/index/process-allocation-matrix.json", function(data) {
+		setupHeadMap("allocationMatrix",data);
+	})
+	.fail(function(data) {
+		numaprofHelper.logError("Fail to load process summary");
+	})
+}
+
+/*******************  FUNCTION  *********************/
 function loadNumaPageStats()
 {
 	$.getJSON( "/api/index/numa-page-stats.json", function(data) {
@@ -360,7 +371,8 @@ $(function() {
 	loadInfos();
 	loadNumaTopo();
 	loadProcessSummary();
-	loadAccessMatrix();
+  loadAccessMatrix();
+  loadAllocationMatrix();
 	loadNumaPageStats();
 	loadDistanceCnt();
 });
