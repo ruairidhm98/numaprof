@@ -92,28 +92,28 @@ class ProfileHandler:
 	def getNumaPageStats(self):
 		return self.data["process"]["maxAllocatedPages"]
 
-  def _getMatrix(self, tag):
-    out = {}
-	  #init
-	  for node in range(-1,self.getNumaNodes()):
-		  out[str(node)] = []
-		  for i in range(0,self.getNumaNodes()):
-			  out[str(node)].append(0)
+	def _getMatrix(self, tag):
+		out = {}
+		#init
+		for node in range(-1,self.getNumaNodes()):
+			out[str(node)] = []
+			for i in range(0,self.getNumaNodes()):
+				out[str(node)].append(0)
 
 		#merge
-    for thread in self.data["threads"]:
-		  matrix = thread[tag]
-		  for node in range(-1,self.getNumaNodes()):
-			  for i in range(0,self.getNumaNodes()):
-				  out[str(node)][i] += matrix[str(node)][i]
+		for thread in self.data["threads"]:
+			matrix = thread[tag]
+			for node in range(-1,self.getNumaNodes()):
+				for i in range(0,self.getNumaNodes()):
+					out[str(node)][i] += matrix[str(node)][i]
 		#ret
 		return out 
 
-  def getProcessAccessMatrix(self):
-    return self._getMatrix("accessMatrix")
+	def getProcessAccessMatrix(self):
+		return self._getMatrix("accessMatrix")
 
-  def getProcessAllocationMatrix(self):
-    return self._getMatrix("allocationMatrix")
+	def getProcessAllocationMatrix(self):
+		return self._getMatrix("allocationMatrix")
 
 	def getProcessDistanceCnt(self):
 		out = []
