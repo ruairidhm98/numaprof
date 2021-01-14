@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
 	
 	//build page table & alloc tracker
 	PageTable table;
-	MallocTracker tracker(&table);
+	MallocTracker tracker(&table, 1);
 	
 	//loopo
 	while (!feof(fp))
