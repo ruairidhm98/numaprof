@@ -11,6 +11,11 @@
 #ifndef NUMAIF_H
 #define NUMAIF_H 1
 
+#define MPOL_F_NODE    (1<<0)   /* return next il node or node of address */
+				/* Warning: MPOL_F_NODE is unsupported and
+				   subject to change. Don't use. */
+#define MPOL_F_ADDR     (1<<1)  /* look up vma using address */
+
 #include <cstdlib>
 
 /*******************  NAMESPACE  ********************/

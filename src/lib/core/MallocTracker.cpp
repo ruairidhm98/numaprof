@@ -7,13 +7,10 @@
 *****************************************************/
 
 /*******************  HEADERS  **********************/
+#include "../../../extern-deps/from-numactl/MovePages.hpp"
 #include "MallocTracker.hpp"
 #include "ProcessTracker.hpp"
 
-#include <numa.h>
-#include <numaif.h>
-#include <unistd.h>
-#include <sys/syscall.h>
 
 /*******************  NAMESPACE  ********************/
 namespace numaprof
@@ -91,10 +88,10 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
   else
   {
     int numaNode;
-    get_mempolicy(&numaNode, NULL, 0, (void*)ptr, MPOL_F_NODE | MPOL_F_ADDR);
+    get_mempolicy(&numaNode, NULL, 0, reinterpret_cast<void*>(ptr), MPOL_F_NODE | MPOL_F_ADDR);
     allocMatrix.access(numaRegion, numaNode);
   }
-  
+
 }
 
 /*******************  FUNCTION  *********************/
