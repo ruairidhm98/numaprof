@@ -10,6 +10,11 @@
 #include "MallocTracker.hpp"
 #include "ProcessTracker.hpp"
 
+#include <numa.h>
+#include <numaif.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+
 /*******************  NAMESPACE  ********************/
 namespace numaprof
 {
@@ -82,6 +87,14 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
   {
     allocMatrix.access(numaRegion, page.numaNode);
   }
+  // Else, we syscall to locate the page
+  else
+  {
+    int numaNode;
+    get_mempolicy(&numaNode, NULL, 0, (void*)ptr, MPOL_F_NODE | MPOL_F_ADDR);
+    allocMatrix.access(numaRegion, numaNode);
+  }
+  
 }
 
 /*******************  FUNCTION  *********************/

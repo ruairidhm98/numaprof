@@ -229,6 +229,15 @@ def apiIndexProcessAccessMatrix(user):
 	jsonData = json.dumps(data)
 	return Response(jsonData, mimetype='application/json')
 
+@app.route('/api/index/process-allocation-matrix.json')
+@htpasswd.required
+@nocache
+def apiIndexProcessAllocationMatrix(user):
+  data = profile.getProcessAllocationMatrix()
+  jsonData = json.dumps(data)
+  return Response(jsonData, mimetype='application/json')
+
+
 @app.route('/api/index/process-distance-cnt.json')
 @htpasswd.required
 @nocache
