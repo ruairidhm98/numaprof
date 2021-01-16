@@ -7,9 +7,17 @@
 *****************************************************/
 
 /*******************  HEADERS  **********************/
-#include "../../../extern-deps/from-numactl/MovePages.hpp"
+
+#include <unistd.h>
+#include <sys/syscall.h>
+
 #include "MallocTracker.hpp"
 #include "ProcessTracker.hpp"
+
+#define MPOL_F_NODE    (1<<0)   /* return next il node or node of address */
+				/* Warning: MPOL_F_NODE is unsupported and
+				   subject to change. Don't use. */
+#define MPOL_F_ADDR     (1<<1)  /* look up vma using address */
 
 
 /*******************  NAMESPACE  ********************/
@@ -88,7 +96,7 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
   else
   {
     int numaNode;
-    get_mempolicy(&numaNode, NULL, 0, reinterpret_cast<void*>(ptr), MPOL_F_NODE | MPOL_F_ADDR);
+		syscall(__NR_get_mempolicy, &numaNode, NULL, 0, (void*)ptr, MPOL_F_NODE | MPOL_F_ADDR);
     allocMatrix.access(numaRegion, numaNode);
   }
 
