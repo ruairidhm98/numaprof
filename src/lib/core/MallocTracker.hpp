@@ -7,7 +7,9 @@
 *****************************************************/
 
 /*******************  HEADERS  **********************/
+#if defined(ALLOCATION_LOCALITY)
 #include "AccessMatrix.hpp"
+#endif
 #include "PageTable.hpp"
 #include "Stats.hpp"
 
@@ -50,21 +52,27 @@ struct MallocInfos
 class MallocTracker
 {
 	public:
+#if defined(ALLOCATION_LOCALITY)
 		MallocTracker(PageTable * pageTable, int nRegions);
+    void setNumaRegion(int region);
+    AccessMatrix const& getAllocMatrix() const;
+#else
+		MallocTracker(PageTable * pageTable);
+#endif
 		void onAlloc(StackIp & ip,size_t ptr, size_t size);
 		void onFree(size_t ptr);
 		void flush(class ProcessTracker * process);
-    void setNumaRegion(int region);
-    AccessMatrix const& getAllocMatrix() const;
 	private:
 		/** Pointer to the page table to know where to register the allocations **/
 		PageTable * pageTable;
 		/** Instruction map to store the per malloc call site counters **/
 		InstrInfoMap instructions;
+#if defined(ALLOCATION_LOCALITY)
     /** Tracks allocation loclity of the threads */
     AccessMatrix allocMatrix;
     /** Region the thread is pinned to, -1 if the thread is unpinned */
     int numaRegion;
+#endif
 };
 
 }

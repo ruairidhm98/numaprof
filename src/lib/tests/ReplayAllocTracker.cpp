@@ -36,8 +36,11 @@ int main(int argc, char ** argv)
 	
 	//build page table & alloc tracker
 	PageTable table;
+#if defined(ALLOCATION_LOCALITY)
 	MallocTracker tracker(&table, 1);
-	
+#else
+	MallocTracker tracker(&table);
+#endif
 	//loopo
 	while (!feof(fp))
 	{

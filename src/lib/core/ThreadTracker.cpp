@@ -27,17 +27,25 @@ namespace numaprof
  * @param process Define the global process tracker to sync the metrics and access 
  * the NUMA topology of the machine.
 **/
+#if defined(ALLOCATION_LOCALITY)
 ThreadTracker::ThreadTracker(ProcessTracker * process)
               :allocTracker(process->getPageTable(), process->getNumaTopo().getNumaNodes())
               ,accessMatrix(process->getNumaTopo().getNumaNodes())
+#else
+ThreadTracker::ThreadTracker(ProcessTracker * process)
+							:allocTracker(process->getPageTable())
+							,accessMatrix(process->getNumaTopo().getNumaNodes())
+#endif
 {
 	assert(process != NULL);
 	this->process = process;
 	this->numa = process->getNumaAffinity(&cpuBindList);
+#if defined(ALLOCATION_LOCALITY)
   if (this->numa >= 0)
   {
     allocTracker.setNumaRegion(this->numa);
   }
+#endif
 	this->table = process->getPageTable();
 	this->topo = &process->getNumaTopo();
 	this->clockStart = Clock::get();
@@ -611,7 +619,9 @@ void convertToJson(htopml::JsonState& json, const ThreadTracker& value)
 		json.printField("numa",value.numa);
 		json.printField("memPolicy",value.memPolicy);
 		json.printField("binding",value.cpuBindList);
+#if defined(ALLOCATION_LOCALITY)
     json.printField("allocationMatrix", value.allocTracker.getAllocMatrix());
+#endif
 		json.printField("accessMatrix",value.accessMatrix);
 		json.printFieldArray("distanceCnt",value.distanceCnt,value.topo->getDistanceMax()+2);
 		json.printField("bindingLog",value.bindingLog);

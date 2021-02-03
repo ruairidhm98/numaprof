@@ -20,6 +20,9 @@ enable_testing()
 #Add internal search path for scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 
+if (ALLOCATION_LOCALITY)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DALLOCTAION_LOCALITY")
+endif()
 ######################################################
 #Delegate some cmake scripts
 include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)

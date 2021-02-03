@@ -14,16 +14,18 @@
 #include "MallocTracker.hpp"
 #include "ProcessTracker.hpp"
 
+#if defined(ALLOCATION_LOCALITY)
+
 #define MPOL_F_NODE    (1<<0)   /* return next il node or node of address */
 				/* Warning: MPOL_F_NODE is unsupported and
 				   subject to change. Don't use. */
 #define MPOL_F_ADDR     (1<<1)  /* look up vma using address */
 
-
+#endif
 /*******************  NAMESPACE  ********************/
 namespace numaprof
 {
-
+#if defined(ALLOCATION_LOCALITY)
 /*******************  FUNCTION  *********************/
 /**
  * Constructor og the tracker.
@@ -31,12 +33,11 @@ namespace numaprof
  * @param region the region the thread that owns this resides on, determines if pinned or not
  * @param nRegions number of reegions in the topology
 **/
-MallocTracker::MallocTracker(PageTable * pageTable, int nRegions)
-  : allocMatrix(nRegions)
+MallocTracker::MallocTracker(PageTable * pTable, int nRegions)
+  : pageTable(pTable)
+  , allocMatrix(nRegions)
   , numaRegion(-1)
-{
-	this->pageTable = pageTable;
-}
+{}
 
 /*******************  FUNCTION  *********************/
 /**
@@ -56,7 +57,16 @@ AccessMatrix const& MallocTracker::getAllocMatrix() const
 {
   return allocMatrix;
 }
-
+#else
+/*******************  FUNCTION  *********************/
+/**
+ * Constructor of the tracker.
+ * @param pageTable Pointer to the page table to register allocation regerences.
+**/
+MallocTracker::MallocTracker(PageTable * pTable)
+  : pageTable(pTable)
+{}
+#endif
 /*******************  FUNCTION  *********************/
 /**
  * To be called by thread to register the allocation into the page table
@@ -83,7 +93,8 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
 	#ifdef NUMAPROF_TRACE_ALLOCS
 		printf("TRACE: tracker.onAlloc(ip,%p,%lu);\n",(void*)ptr,size);
 	#endif
-	
+
+#if defined(ALLOCATION_LOCALITY)
 	//reg to page table
 	pageTable->regAllocPointer(ptr,size,infos);
   // Record the allocation into the matrix
@@ -99,7 +110,7 @@ void MallocTracker::onAlloc(StackIp & ip,size_t ptr, size_t size)
 		syscall(__NR_get_mempolicy, &numaNode, NULL, 0, (void*)ptr, MPOL_F_NODE | MPOL_F_ADDR);
     allocMatrix.access(numaRegion, numaNode);
   }
-
+#endif
 }
 
 /*******************  FUNCTION  *********************/
