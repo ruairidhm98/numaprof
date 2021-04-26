@@ -714,12 +714,12 @@ if [ ! -z "$CFG_EXTRA_LDFLAGS" ];  then cfg_push_cmake_opt "-DCMAKE_STATIC_LINKE
 ######################################################
 #execute or display
 if [ "${ENABLE_DISPLAY_COMMAND}" = 'true' ]; then
-	cfg_gen_final_command_lines true | xargs -d "\n" echo "${CFG_CMAKE_COMMAND}"
+	cfg_gen_final_command_lines true | gxargs -d "\n" echo "${CFG_CMAKE_COMMAND}"
 	cfg_exit 0
 else
 	printf "${CFG_COLOR_YELLOW}"
-	cfg_gen_final_command_lines true | xargs -d "\n" echo ">>> ${CFG_CMAKE_COMMAND}"
+	cfg_gen_final_command_lines true | gxargs -d "\n" echo ">>> ${CFG_CMAKE_COMMAND}"
 	printf "${CFG_COLOR_RESET}"
-	cfg_gen_final_command_lines | xargs -d "\n" "${CFG_CMAKE_COMMAND}"
+	cfg_gen_final_command_lines | gxargs -d "\n" "${CFG_CMAKE_COMMAND}"
 	cfg_exit $?
 fi

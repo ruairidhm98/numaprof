@@ -26,12 +26,10 @@ AccessMatrix::AccessMatrix(int numaNodes)
 {
 	assert(numaNodes > 0);
 	this->numaNodes = numaNodes;
-	this->matrix = new size_t*[numaNodes+1];
+	this->matrix = new size_t*[numaNodes+1]{0};
 	for (int i = 0 ; i < numaNodes+1 ; i++)
 	{
-		this->matrix[i] = new size_t[numaNodes];
-		for (int j = 0 ; j < numaNodes ; j++)
-			this->matrix[i][j] = 0;
+		this->matrix[i] = new size_t[numaNodes]{0};
 	}
 }
 

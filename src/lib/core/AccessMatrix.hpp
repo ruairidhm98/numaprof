@@ -28,6 +28,7 @@ class AccessMatrix
 		~AccessMatrix(void);
 		void merge(AccessMatrix & value);
 		void access(int threadNumaNode,int pageNumaNode);
+    void access(int threadNumaNode, int pageNumaNode, size_t size);
 		friend void convertToJson(htopml::JsonState& json, const AccessMatrix& value);
 	private:
 		/** Matrix to store counters **/
@@ -35,6 +36,14 @@ class AccessMatrix
 		/** Number of numa nodes **/
 		int numaNodes;
 };
+
+inline void AccessMatrix::access(int threadNumaNode, int pageNumaNode, size_t size)
+{
+  assert(threadNumaNode >= -1 && threadNumaNode < numaNodes); 
+	assert(pageNumaNode >= 0 && pageNumaNode < numaNodes); 
+  matrix[threadNumaNode+1][pageNumaNode] += size;
+}
+
 
 /*******************  FUNCTION  *********************/
 /**

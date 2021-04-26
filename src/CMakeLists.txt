@@ -26,9 +26,9 @@ else (Qt5Widgets_FOUND AND Qt5Webkit_FOUND AND Qt5Network_FOUND)
 endif (Qt5Widgets_FOUND AND Qt5Webkit_FOUND AND Qt5Network_FOUND)
 
 ######################################################
-add_subdirectory(lib)
-add_subdirectory(manpages)
-add_subdirectory(testcase)
+#add_subdirectory(lib)
+#add_subdirectory(manpages)
+#add_subdirectory(testcase)
 add_subdirectory(integration)
 if (ENABLE_WEBVIEW)
 	add_subdirectory(webview)
